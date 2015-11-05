@@ -172,3 +172,95 @@ void playRightTune() {
   delay(50);
   noTone(PRIMO_BUZZER_PIN);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool executeSound(CommandsMessage &commandsMsg)
+{
+  if (!checkCommands(commandsMsg))
+  {
+    playSadTune();
+
+    return false;
+  }
+
+  bool oneOrMoreCommandsExecuted = false;
+
+  for (int instrIdx = 0; instrIdx < PRIMO_MAX_MAIN_INSTRUCTIONS; ++instrIdx)
+  {
+    switch (commandsMsg.mainInstructions[instrIdx])
+    {
+      case PRIMO_COMMAND_FUNCTION :
+        if (executeSoundFunction(commandsMsg))
+          oneOrMoreCommandsExecuted = true;
+        break;
+
+      default:
+        if (setBeep(commandsMsg.mainInstructions[instrIdx]))
+        {
+          oneOrMoreCommandsExecuted = true;
+        }
+        break;
+    }
+  }
+
+  if (oneOrMoreCommandsExecuted)
+    playHappyTune();
+
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool executeSoundFunction(CommandsMessage &commandsMsg)
+{
+  bool oneOrMoreCommandsExecuted = false;
+
+  for (int instrIdx = 0; instrIdx < PRIMO_MAX_FUNCTION_INSTRUCTIONS; ++instrIdx)
+  {
+    if (commandsMsg.functionInstructions[instrIdx] == PRIMO_COMMAND_FUNCTION)
+    {
+      // Function recursive calls are allowed (infinite loop in our case)
+      instrIdx = -1;
+      continue;
+    }
+
+    if (setBeep(commandsMsg.functionInstructions[instrIdx]))
+    {
+      delay(100);
+      oneOrMoreCommandsExecuted = true;
+    }
+  }
+
+  return oneOrMoreCommandsExecuted;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool setBeep(uint8_t command)
+{
+  bool moveCommandRecognized = false;
+
+  switch (command)
+  {
+    case PRIMO_COMMAND_FORWARD :
+      playForwardTune();
+      moveCommandRecognized = true;
+      break;
+
+    case PRIMO_COMMAND_LEFT :
+      playLeftTune();
+      moveCommandRecognized = true;
+      break;
+
+    case PRIMO_COMMAND_RIGHT :
+      playRightTune();      
+      moveCommandRecognized = true;
+      break;
+
+    default:
+      break;
+  }
+
+  return moveCommandRecognized;
+}

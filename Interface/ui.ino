@@ -36,27 +36,22 @@ void filterInvalidInstructions (CommandsMessage &commandsMsg)
   
   while (instrIdx < PRIMO_MAX_MAIN_INSTRUCTIONS)
   {
-    if (isKnownInstruction(commandsMsg.mainInstructions[instrIdx]))
-      ++instrIdx;
-    else
-      break;
+    if (!isKnownInstruction(commandsMsg.mainInstructions[instrIdx]))
+    {
+      commandsMsg.mainInstructions[instrIdx++] = PRIMO_COMMAND_NONE;
+    }
+    ++instrIdx;
   }
   
-  while (instrIdx < PRIMO_MAX_MAIN_INSTRUCTIONS)
-    commandsMsg.mainInstructions[instrIdx++] = PRIMO_COMMAND_NONE;
-
   instrIdx = 0;
-  
   while (instrIdx < PRIMO_MAX_FUNCTION_INSTRUCTIONS)
   {
     if (isKnownInstruction(commandsMsg.functionInstructions[instrIdx]))
-      ++instrIdx;
-    else
-      break;
+    {
+      commandsMsg.functionInstructions[instrIdx++] = PRIMO_COMMAND_NONE;
+    }
+    ++instrIdx;
   }
-  
-  while (instrIdx < PRIMO_MAX_FUNCTION_INSTRUCTIONS)
-    commandsMsg.functionInstructions[instrIdx++] = PRIMO_COMMAND_NONE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

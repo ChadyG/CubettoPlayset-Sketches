@@ -46,7 +46,7 @@ void filterInvalidInstructions (CommandsMessage &commandsMsg)
   instrIdx = 0;
   while (instrIdx < PRIMO_MAX_FUNCTION_INSTRUCTIONS)
   {
-    if (isKnownInstruction(commandsMsg.functionInstructions[instrIdx]))
+    if (!isKnownInstruction(commandsMsg.functionInstructions[instrIdx]))
     {
       commandsMsg.functionInstructions[instrIdx++] = PRIMO_COMMAND_NONE;
     }
